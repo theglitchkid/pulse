@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PULSE</title>
+<meta name="description" content="Everything that matters, ranked.">
+<meta name="theme-color" content="#08090b">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PULSE">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="bar">
+    <div class="brand"><span class="pulse" aria-hidden="true"></span>PULSE</div>
+    <div class="upd" id="updated" aria-live="polite"></div>
+    <button class="icon-btn" id="refresh" aria-label="Refresh">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <label class="search">
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <input id="q" type="search" placeholder="Search everything" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Search">
+    <button id="clear" class="clear" aria-label="Clear search" hidden>×</button>
+  </label>
+  <nav class="chips" id="chips" aria-label="Categories"></nav>
+  <div class="controls">
+    <div class="seg" id="sort" role="tablist" aria-label="Sort">
+      <button data-v="hot">Hot</button><button data-v="new">New</button><button data-v="top">Top</button>
+    </div>
+    <div class="seg" id="range" role="tablist" aria-label="Time range">
+      <button data-v="1">1h</button><button data-v="6">6h</button><button data-v="24">24h</button><button data-v="72">3d</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <section id="hero" class="hero" hidden>
+    <h2 class="label">Top 5 right now</h2>
+    <div class="hero-row" id="heroRow"></div>
+  </section>
+  <ol id="feed" class="feed"></ol>
+  <div id="state" class="state" hidden></div>
+  <div id="sentinel" aria-hidden="true"></div>
+</main>
+<script src="app.js" defer></script>
+</body>
+</html>

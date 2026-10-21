@@ -1,0 +1,63 @@
+name: Build & deploy PULSE
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # every 15 minutes (GitHub may delay scheduled runs a few minutes)
+  workflow_dispatch:          # "Run workflow" button in the Actions tab
+  push:
+    branches: [main]
+    paths-ignore: ["site/data.json", "README.md", "previews/**"]
+
+permissions:
+  contents: write   # commit the refreshed data.json
+  pages: write      # deploy to GitHub Pages
+  id-token: write   # required by deploy-pages
+
+concurrency:
+  group: pulse-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch sources and build data.json
+        env:
+          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+        run: python build.py
+
+      - name: Commit data.json if it changed
+        run: |
+          git config user.name  "pulse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data.json
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)" --quiet
+            git pull --rebase --quiet origin main || true
+            git push --quiet || echo "Push skipped (another run won); the deploy below still uses fresh data."
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
