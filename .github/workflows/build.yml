@@ -42,9 +42,12 @@ jobs:
             echo "No changes."
           else
             git commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)" --quiet
-            git pull --rebase --quiet origin main || true
+            git pull --rebase --quiet origin main || git rebase --abort
             git push --quiet || echo "Push skipped (another run won); the deploy below still uses fresh data."
           fi
+
+      - name: Verify data.json is valid
+        run: python -c "import json;d=json.load(open('site/data.json'));assert d['items']"
 
       - uses: actions/configure-pages@v5
 
